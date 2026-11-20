@@ -135,7 +135,7 @@ def main():
         
         # Extract classification result if available
         if hasattr(result, 'pred_cls_label'):
-            diet_classes = ['control', 'high_forage', 'low_forage']
+            diet_classes = ['mixed_diet', 'high_forage', 'high_grain']
             pred_label = result.pred_cls_label
             if isinstance(pred_label, torch.Tensor):
                 pred_label = pred_label.item()

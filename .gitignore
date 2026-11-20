@@ -50,7 +50,6 @@ wandb/
 
 # Data (typically too large for git)
 data/
-datasets/
 *.mp4
 *.avi
 

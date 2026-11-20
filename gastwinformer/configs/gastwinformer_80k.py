@@ -6,7 +6,7 @@ gas leak detection dataset.
 
 _base_ = [
     "./_base_/models/gastwinformer.py",
-    "./_base_/datasets/example_dataset.py",
+    "./_base_/datasets/beef_cattle.py",
     "./_base_/schedules/schedule_80k.py",
     "./_base_/default_runtime.py",
 ]

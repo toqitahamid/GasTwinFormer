@@ -1,14 +1,13 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
-title: "GasTwinFormer: A Hybrid Vision Transformer for Livestock Methane Emission Segmentation and Dietary Classification in Optical Gas Imaging"
+message: "If you use this code, the dataset or the checkpoint, you must cite the paper below."
+title: "GasTwinFormer"
+type: software
 authors:
   - family-names: "Sarker"
     given-names: "Toqi Tahamid"
-    email: toqitahamid.sarker@siu.edu
     affiliation: "Southern Illinois University Carbondale"
   - family-names: "Embaby"
     given-names: "Mohamed"
-    email: membaby@ucdavis.edu
     affiliation: "University of California, Davis"
   - family-names: "Islam"
     given-names: "Taminul"
@@ -17,24 +16,34 @@ authors:
     given-names: "Amer"
     affiliation: "Southern Illinois University Carbondale"
   - family-names: "Ahmed"
-    given-names: "Khaled R"
+    given-names: "Khaled"
     affiliation: "Southern Illinois University Carbondale"
-type: conference-paper
-conference:
-  name: "IEEE/CVF International Conference on Computer Vision Workshops (ICCVW)"
-year: 2025
-repository-code: "https://github.com/toqitahamid/gastwinformer"
+repository-code: "https://github.com/toqitahamid/GasTwinFormer"
 url: "https://gastwinformer.github.io"
-identifiers:
-  - type: other
-    value: "arXiv:2508.15057"
-    description: "arXiv preprint"
-keywords:
-  - "methane emission"
-  - "vision transformer"
-  - "semantic segmentation"
-  - "optical gas imaging"
-  - "livestock monitoring"
-  - "deep learning"
 license: MIT
-
+keywords:
+  - methane emission
+  - optical gas imaging
+  - semantic segmentation
+  - vision transformer
+  - livestock monitoring
+preferred-citation:
+  type: conference-paper
+  title: "GasTwinFormer: A Hybrid Vision Transformer for Livestock Methane Emission Segmentation and Dietary Classification in Optical Gas Imaging"
+  authors:
+    - family-names: "Sarker"
+      given-names: "Toqi Tahamid"
+    - family-names: "Embaby"
+      given-names: "Mohamed"
+    - family-names: "Islam"
+      given-names: "Taminul"
+    - family-names: "AbuGhazaleh"
+      given-names: "Amer"
+    - family-names: "Ahmed"
+      given-names: "Khaled"
+  collection-title: "2025 IEEE/CVF International Conference on Computer Vision Workshops (ICCVW)"
+  year: 2025
+  doi: "10.1109/ICCVW69036.2025.00293"
+  start: 2808
+  end: 2817
+  url: "https://openaccess.thecvf.com/content/ICCV2025W/SEA/html/Sarker_GasTwinFormer_A_Hybrid_Vision_Transformer_for_Livestock_Methane_Emission_Segmentation_ICCVW_2025_paper.html"

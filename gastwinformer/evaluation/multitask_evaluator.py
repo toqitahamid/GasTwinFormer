@@ -41,7 +41,7 @@ class MultitaskEvaluator(BaseMetric):
             mkdir_or_exist(self.output_dir)
         
         # Diet class names for reporting
-        self.diet_classes = {0: 'control', 1: 'high_forage', 2: 'low_forage'}
+        self.diet_classes = {0: 'mixed_diet', 1: 'high_forage', 2: 'high_grain'}
         self.seg_classes = {0: 'background', 1: 'plume'}
         
     def process(self, data_batch: dict, data_samples: List[dict]) -> None:

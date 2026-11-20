@@ -1,210 +1,62 @@
-# GasTwinFormer: A Hybrid Vision Transformer for Livestock Methane Emission Segmentation and Dietary Classification in Optical Gas Imaging
+<div align="center">
 
-[![ICCVW 2025](https://img.shields.io/badge/ICCVW-2025-blue)](https://iccv2025.org/)
-[![arXiv](https://img.shields.io/badge/arXiv-2508.15057-b31b1b.svg)](https://arxiv.org/abs/2508.15057)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-orange.svg)](https://pytorch.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<h1>GasTwinFormer</h1>
+<h3>A Hybrid Vision Transformer for Livestock Methane Emission Segmentation and Dietary Classification in Optical Gas Imaging</h3>
 
-**Official PyTorch implementation** of GasTwinFormer accepted at ICCVW 2025.
+Toqi Tahamid Sarker<sup>1</sup>, Mohamed Embaby<sup>2</sup>, Taminul Islam<sup>1</sup>, Amer AbuGhazaleh<sup>1</sup>, Khaled R. Ahmed<sup>1</sup>
 
-> 📄 **Paper**: [arXiv:2508.15057](https://arxiv.org/abs/2508.15057)  
-> 🌐 **Project Page**: [gastwinformer.github.io](https://gastwinformer.github.io/)  
-> 🎬 **Demo**: See project page for video demonstrations
+<sup>1</sup> Southern Illinois University Carbondale, <sup>2</sup> University of California, Davis
 
-## 📋 Overview
+**ICCV 2025 Workshops**
 
-GasTwinFormer is a hybrid vision transformer for real-time livestock methane emission segmentation and dietary classification in optical gas imaging (OGI). The model combines:
+[Paper (arXiv)](https://arxiv.org/abs/2508.15057) | [CVF](https://openaccess.thecvf.com/content/ICCV2025W/SEA/html/Sarker_GasTwinFormer_A_Hybrid_Vision_Transformer_for_Livestock_Methane_Emission_Segmentation_ICCVW_2025_paper.html) | [IEEE Xplore](https://ieeexplore.ieee.org/document/11374624) | [Project Page](https://gastwinformer.github.io/) | [Dataset](https://huggingface.co/datasets/toqi/beef-cattle-methane-ogi) | [Weights](https://huggingface.co/toqi/GasTwinFormer)
 
-- **Hybrid Twin Transformer Architecture**: Mix Twin encoder alternating between Efficient Multi-head Attention (EMA) and Locally-grouped Self-Attention (LSA) with EL-EL-EL-EL pattern
-- **Gaussian Plume-Weighted Loss**: Physics-informed loss function leveraging gas dispersion behavior
-- **Hierarchical LR-ASPP Decoder**: Lightweight decoder for multi-scale feature aggregation
-- **Multitask Learning**: Simultaneous methane segmentation and dietary treatment classification
+</div>
 
-### Key Features
+## Abstract
 
-✨ **State-of-the-art Performance**: **74.47% mIoU** and **83.63% mF1** for segmentation  
-⚡ **Real-time Inference**: **114.9 FPS** on NVIDIA A100 GPU  
-🔬 **Physics-Informed**: Incorporates Gaussian plume model through weighted Dice loss  
-🎯 **Efficient Architecture**: Only **3.348M parameters** with **3.428 GFLOPs**  
-🎓 **Perfect Classification**: **100% accuracy** for dietary treatment prediction  
-📦 **Easy to Use**: Built on MMSegmentation for seamless integration  
+Livestock methane emissions represent 32% of human-caused methane production, making automated monitoring critical for climate mitigation strategies. We introduce GasTwinFormer, a hybrid vision transformer for real-time methane emission segmentation and dietary classification in optical gas imaging through a novel Mix Twin encoder alternating between spatially-reduced global attention and locally-grouped attention mechanisms. Our architecture incorporates a lightweight LR-ASPP decoder for multi-scale feature aggregation and enables simultaneous methane segmentation and dietary classification in a unified framework. We contribute the first comprehensive beef cattle methane emission dataset using OGI, containing 11,694 annotated frames across three dietary treatments. GasTwinFormer achieves 74.47% mIoU and 83.63% mF1 for segmentation while maintaining exceptional efficiency with only 3.348M parameters, 3.428G FLOPs, and 114.9 FPS inference speed. Additionally, our method achieves perfect dietary classification accuracy (100%), demonstrating the effectiveness of leveraging diet-emission correlations. Extensive ablation studies validate each architectural component, establishing GasTwinFormer as a practical solution for real-time livestock emission monitoring.
 
-## 🚀 Getting Started
+## Installation
 
-### Prerequisites
+The code is built on MMSegmentation 1.2 and needs Python 3.8 or newer and PyTorch 2.0 or newer.
 
-- Python >= 3.8
-- PyTorch >= 2.0.0
-- CUDA >= 11.0 (for GPU training)
-
-### Installation
-
-1. **Clone the repository**
 ```bash
-git clone https://github.com/yourusername/gastwinformer.git
-cd gastwinformer
-```
-
-2. **Install dependencies**
-```bash
+git clone https://github.com/toqitahamid/GasTwinFormer.git
+cd GasTwinFormer
 pip install -r requirements.txt
-```
-
-3. **Install GasTwinFormer**
-```bash
 pip install -e .
 ```
 
-### Quick Start
+## Dataset
 
-#### Inference with Pre-trained Model
-
-```python
-import torch
-from mmseg.apis import init_model, inference_model, show_result_pyplot
-
-# Load config and checkpoint
-config_file = 'gastwinformer/configs/gastwinformer_80k.py'
-checkpoint_file = 'path/to/checkpoint.pth'  # Download from releases
-
-# Initialize model
-model = init_model(config_file, checkpoint_file, device='cuda:0')
-
-# Run inference
-img = 'path/to/your/image.jpg'
-result = inference_model(model, img)
-
-# Visualize results
-show_result_pyplot(model, img, result, show=True)
-```
-
-#### Training
+The data are on Hugging Face: [toqi/beef-cattle-methane-ogi](https://huggingface.co/datasets/toqi/beef-cattle-methane-ogi). It has 11,694 labelled frames from 19 FLIR recordings. Each frame has a binary plume mask, a multi-class mask and the diet label (0 Mixed Diet, 1 High Forage, 2 High Grain). To write the PNG folders and split lists that the config reads, run
 
 ```bash
-# Single GPU
+hf download toqi/beef-cattle-methane-ogi --repo-type dataset --local-dir gastwin_hf
+pip install pyarrow
+python tools/unpack_dataset.py gastwin_hf data
+```
+
+This writes the official split (`train.txt`, `val.txt`, `test.txt`) and a by-animal split (`animal_train.txt`, `animal_val.txt`, `animal_test.txt`). We recommend the by-animal split for new work, because the official split puts frames of the same animal in training and test. To use it, change the `ann_file` names in `gastwinformer/configs/_base_/datasets/beef_cattle.py`.
+
+## Pretrained Weights
+
+The checkpoint is on Hugging Face: [toqi/GasTwinFormer](https://huggingface.co/toqi/GasTwinFormer).
+
+```bash
+hf download toqi/GasTwinFormer gastwinformer_best_mIoU_iter_80000.pth --local-dir weights
+python tools/test.py gastwinformer/configs/gastwinformer_80k.py weights/gastwinformer_best_mIoU_iter_80000.pth
+```
+
+## Training
+
+```bash
 python tools/train.py gastwinformer/configs/gastwinformer_80k.py
-
-# Multi-GPU (4 GPUs)
-bash tools/dist_train.sh gastwinformer/configs/gastwinformer_80k.py 4
+bash tools/dist_train.sh gastwinformer/configs/gastwinformer_80k.py 4   # four GPUs
 ```
 
-#### Evaluation
-
-```bash
-python tools/test.py gastwinformer/configs/gastwinformer_80k.py \
-    path/to/checkpoint.pth \
-    --eval mIoU
-```
-
-## 📊 Model Architecture
-
-### Backbone: Mix Twin Encoder
-
-The backbone combines Efficient Multi-head Attention (EMA) from SegFormer and Locally-grouped Self-Attention (LSA) from Twins in a novel hybrid architecture:
-
-- **4 hierarchical stages** with progressive downsampling (H/4 → H/32) and channel expansion (32 → 64 → 160 → 256)
-- **EL-EL-EL-EL pattern**: Each stage contains one EMA block followed by one LSA block (8 total blocks)
-- **Locally-grouped Self Attention (LSA)**: 5×5 window size for fine-grained local structure
-- **Efficient Multi-head Attention (EMA)**: Spatial reduction ratios [8, 4, 2, 1] for global context
-- **Mix Feed-Forward Network**: Incorporates 3×3 depthwise convolution for spatial inductive bias
-
-### Decoder: Hierarchical LR-ASPP
-
-Lightweight decoder for multi-scale feature aggregation:
-
-- Processes multi-scale features {F₁, F₂, F₃, F₄} from all encoder stages
-- Adaptive average pooling for resolution independence
-- Progressive fusion: F₄ through ASPP path, F₁-F₃ through 1×1 conv branches
-- 128 internal channels for optimal accuracy-efficiency balance
-
-### Classification Head
-
-Simple yet effective scene-level dietary classification:
-
-- Operates on Stage 4 features (highest semantic level)
-- Two-layer fully connected network with ReLU and dropout
-- Predicts dietary treatment: High Forage (HF), Mixed Diet (MD), High Grain (HG)
-
-### Loss Function: Gaussian Plume-Weighted Dice Loss
-
-Physics-informed loss incorporating gas dispersion behavior:
-
-```
-L_weighted = 1 - (2∑(w(p)·yₚ·ŷₚ) + ε) / (∑(w(p)·yₚ) + ∑(w(p)·ŷₚ) + ε)
-
-where w(p) = exp(-((pₓ-μₓ)²/(2σₓ²) + (pᵧ-μᵧ)²/(2σᵧ²)))
-```
-
-The Gaussian weights are computed from predicted mask center-of-mass (μₓ, μᵧ) and weighted standard deviations (σₓ, σᵧ), emphasizing plume center regions while attenuating towards edges.
-
-## 📁 Dataset Preparation
-
-GasTwinFormer expects data in the following structure:
-
-```
-data/
-├── train/
-│   ├── images/
-│   │   ├── FLIR0001_frame_00001.png
-│   │   └── ...
-│   └── masks/
-│       ├── FLIR0001_frame_00001.png
-│       └── ...
-├── val/
-│   ├── images/
-│   └── masks/
-├── test/
-│   ├── images/
-│   └── masks/
-├── combined_train.csv
-├── combined_val.csv
-└── combined_test.csv
-```
-
-**CSV Format** (for multitask learning with dietary classification):
-```csv
-img_name,diet_type
-FLIR0001_frame_00001.png,high_forage
-FLIR0002_frame_00001.png,control
-FLIR0003_frame_00001.png,low_forage
-...
-```
-
-**Dataset Statistics**:
-- **Total Frames**: 11,694 annotated frames
-- **Dietary Treatments**: 3 (High Forage, Mixed Diet/Control, High Grain/Low Forage)
-- **Source**: Beef cattle methane emissions captured via Optical Gas Imaging (OGI)
-- **Technology**: FLIR thermal infrared cameras (7-8.5 μm spectral range)
-
-## 🔧 Configuration
-
-The model is highly configurable through MMSegmentation's config system. Key configuration files:
-
-- `gastwinformer/configs/gastwinformer_80k.py`: Main config
-- `gastwinformer/configs/_base_/models/gastwinformer.py`: Model architecture
-- `gastwinformer/configs/_base_/datasets/example_dataset.py`: Dataset settings
-- `gastwinformer/configs/_base_/schedules/schedule_80k.py`: Training schedule
-
-### Key Hyperparameters
-
-| Parameter | Value | Description |
-|-----------|-------|-------------|
-| Learning Rate | 6×10⁻⁵ | Base learning rate (AdamW) |
-| Beta | (0.9, 0.999) | Adam beta parameters |
-| Weight Decay | 0.01 | L2 regularization |
-| Warmup | 1,500 iterations | Linear warmup from 10⁻⁶ |
-| LR Schedule | Polynomial (power=1.0) | Learning rate decay |
-| Total Iterations | 80,000 | Training iterations |
-| Validation Interval | 8,000 | Validation frequency |
-| Batch Size | 8 | Training batch size |
-| Input Size | 512×512 | Image resolution |
-| Drop Path Rate | 0.1 | Stochastic depth |
-| Decoder LR Multiplier | 10× | For faster head convergence |
-
-## 📈 Results
-
-### Methane Emission Segmentation
+## Results
 
 | Model | Backbone | mIoU (%) | mF1 (%) | Diet Acc (%) | Params (M) | FLOPs (G) | FPS |
 |-------|----------|----------|---------|--------------|------------|-----------|-----|
@@ -216,99 +68,29 @@ The model is highly configurable through MMSegmentation's config system. Key con
 | DDRNet | DDRNet | 68.91 | 78.65 | 99.94 | 5.766 | 4.56 | 156.38 |
 | **GasTwinFormer** | **MixTwin** | **74.47** | **83.63** | **100.0** | **3.348** | **3.428** | **114.9** |
 
-**Key Achievements**:
-- 🏆 **Highest Accuracy**: 74.47% mIoU, 83.63% mF1 (best among all methods)
-- ⚡ **Most Efficient**: 3.348M parameters, 3.428G FLOPs (smallest transformer model)
-- 🚀 **Real-time**: 114.9 FPS enables continuous monitoring
-- 🎯 **Perfect Classification**: 100% dietary treatment accuracy
+FPS is measured on an NVIDIA A100 GPU.
 
-### Performance Comparison
+## Citation
 
-**vs. SegFormer-B0**: +2.36% mIoU, -11.5% parameters, -56.5% FLOPs  
-**vs. GasFormer**: +2.22% mIoU, -9.9% parameters, -65.4% FLOPs  
-**vs. Twins PCPVT-S**: +0.42% mIoU, -8.3× parameters, -12.9× FLOPs  
-**vs. DeepLabV3**: +4.11% mIoU, -20× parameters, -78× FLOPs
-
-## 🛠️ Advanced Usage
-
-### Custom Dataset
-
-```python
-from gastwinformer.datasets import DietPlumeDataset
-from mmseg.registry import DATASETS
-
-@DATASETS.register_module()
-class MyCustomDataset(DietPlumeDataset):
-    METAINFO = dict(
-        classes=('background', 'gas'),
-        palette=[[0, 0, 0], [255, 0, 0]]
-    )
-    
-    # Override methods as needed
-```
-
-### Custom Loss Function
-
-```python
-from gastwinformer.models.losses import GaussianPlumeWeightedDiceLoss
-
-# Use in config
-loss_decode = dict(
-    type='GaussianPlumeWeightedDiceLoss',
-    loss_weight=1.0,
-    gas_class_idx=1
-)
-```
-
-## 📚 Citation
-
-If you find this work useful, please cite:
+If you use this code, the dataset or the checkpoint, you must cite the paper below.
 
 ```bibtex
 @inproceedings{sarker2025gastwinformer,
-  title={GasTwinFormer: A Hybrid Vision Transformer for Livestock Methane Emission Segmentation and Dietary Classification in Optical Gas Imaging},
-  author={Sarker, Toqi Tahamid and Embaby, Mohamed and Islam, Taminul and AbuGhazaleh, Amer and Ahmed, Khaled R},
-  booktitle={Proceedings of the IEEE/CVF International Conference on Computer Vision Workshops (ICCVW)},
-  year={2025}
+  author    = {Sarker, Toqi Tahamid and Embaby, Mohamed and Islam, Taminul and AbuGhazaleh, Amer and Ahmed, Khaled},
+  title     = {GasTwinFormer: A Hybrid Vision Transformer for Livestock Methane Emission Segmentation and Dietary Classification in Optical Gas Imaging},
+  booktitle = {2025 IEEE/CVF International Conference on Computer Vision Workshops (ICCVW)},
+  year      = {2025},
+  pages     = {2808--2817},
+  doi       = {10.1109/ICCVW69036.2025.00293}
 }
 ```
 
-Or cite the arXiv preprint:
-```bibtex
-@article{sarker2025gastwinformer,
-  title={GasTwinFormer: A Hybrid Vision Transformer for Livestock Methane Emission Segmentation and Dietary Classification in Optical Gas Imaging},
-  author={Sarker, Toqi Tahamid and Embaby, Mohamed and Islam, Taminul and AbuGhazaleh, Amer and Ahmed, Khaled R},
-  journal={arXiv preprint arXiv:2508.15057},
-  year={2025}
-}
-```
+## License
 
-## 🙏 Acknowledgements
+The code is released under the [MIT License](LICENSE). The dataset and the checkpoint are released under [CC BY-NC 4.0](https://creativecommons.org/licenses/by-nc/4.0/). Commercial use of the data is not permitted.
 
-This project is built on top of several excellent open-source projects:
+## Acknowledgments
 
-- [MMSegmentation](https://github.com/open-mmlab/mmsegmentation): Semantic segmentation toolbox
-- [SegFormer](https://github.com/NVlabs/SegFormer): Transformer baseline
-- [Twins-SVT](https://github.com/Meituan-AutoML/Twins): Twin attention mechanism
+This work is supported by the project ["Artificial Intelligence for Greener Livestock: Educational and Research"](https://ai-greener-livestock.github.io/), award no. 2022-70001-37404, from the U.S. Department of Agriculture's National Institute of Food and Agriculture.
 
-We thank the authors for their contributions to the community.
-
-## 📄 License
-
-This project is released under the [MIT License](LICENSE).
-
-## 🤝 Contributing
-
-We welcome contributions! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
-
-## 📧 Contact
-
-For questions and feedback:
-- **Email**: toqitahamid.sarker@siu.edu
-- **Project Page**: [gastwinformer.github.io](https://gastwinformer.github.io)
-- **GitHub Issues**: For bug reports and feature requests
-
----
-
-**Note**: This is research code. It is provided as-is for reproducibility and further research. For production use, additional testing and validation are recommended.
-
+The code is based on [MMSegmentation](https://github.com/open-mmlab/mmsegmentation), [SegFormer](https://github.com/NVlabs/SegFormer) and [Twins](https://github.com/Meituan-AutoML/Twins). We thank the authors for their work.

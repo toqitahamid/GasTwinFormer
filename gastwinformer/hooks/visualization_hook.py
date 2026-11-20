@@ -41,7 +41,7 @@ class FlexibleSegVisualizationHook(Hook):
     """
 
     # Diet class names mapping
-    DIET_CLASSES = ('control', 'high_forage', 'low_forage')
+    DIET_CLASSES = ('mixed_diet', 'high_forage', 'high_grain')
 
     def __init__(self,
                  draw: bool = False,
